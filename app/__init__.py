@@ -8,7 +8,6 @@ from models.colors import colors
 from .console import Console
 from .request_builder import RequestBuilder
 
-# Constants
 ctk.set_appearance_mode("dark")
 ctk.set_default_color_theme(path.join("assets", "theme.json"))
 
@@ -20,12 +19,9 @@ GITHUB_URL: str = "https://github.com/GuillaumeMCK/"
 class App(ctk.CTk):
     def __init__(self) -> None:
         super().__init__()
-        self.icon_path: str = path.join("assets", "icon.ico")
         self.navbar: Optional[ctk.CTkFrame] = None
         self.console: Optional[Console] = None
         self.reqBuilder: Optional[RequestBuilder] = None
-
-        self.iconbitmap(self.icon_path)
         self.setup_widgets()
 
     def setup_widgets(self) -> None:
@@ -38,8 +34,7 @@ class App(ctk.CTk):
         self._add_resize_button()
         self._configure_grid()
 
-        self.console.log("$greeno/ $greyConsole initialized")
-        self.console.draw_line()
+        self.console.log("$greeno/ $greyLogs viewer")
 
     def _configure_window(self) -> None:
         """Set up the main window attributes."""
@@ -51,10 +46,9 @@ class App(ctk.CTk):
         """Create and configure the navbar for the application."""
         navbar = ctk.CTkFrame(self, fg_color=colors.black, height=38)
         navbar.grid(row=0, column=0, columnspan=2, sticky="ew")
-
-        self.title_label = ctk.CTkLabel(navbar, text="RequestiPy", text_color=colors.grey, font=("Roboto", 12))
-        self.title_label.grid(row=0, column=0, padx=(10, 0), sticky="w")
-
+        icon = ctk.CTkImage(dark_image=Image.open("icon.ico"))
+        ctk.CTkLabel(navbar, text="RequestiPy", image=icon, compound="left", fg_color=colors.black,
+                     bg_color=colors.black).grid(row=0, column=0, sticky="w", padx=5)
         navbar.bind("<B1-Motion>", self._drag_window)
         return navbar
 
