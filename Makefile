@@ -1,25 +1,31 @@
-PYPY = venv/bin/pypy3
-PIP = venv/bin/pip3
+PY = venv/bin/pypy3
+PIP = venv/bin/pip
+VENV_DIR = venv
 
-.PHONY: run activate freeze install clean build pre-push
+.PHONY: run activate freeze install clean build pre-push test
 
 run: install
-	$(PYPY) main.py
+	$(PY) main.py
 
-activate: venv/bin/activate
+activate: $(VENV_DIR)/bin/activate
 
-venv/bin/activate:
-	pypy3 -m venv venv
+$(VENV_DIR)/bin/activate:
+	pypy3 -m ensurepip
+	pypy3 -m venv $(VENV_DIR)
 	touch $@
 
 install: activate requirements.txt
-	$(PIP) install --upgrade pip
-	$(PIP) install -r requirements.txt
+	$(PIP) install -r requirements.txt --no-cache-dir
+	cd http_client && ../$(PY) setup.py build && ../$(PY) setup.py install
 
 freeze: activate
 	$(PIP) freeze > requirements.txt
 
 clean:
-	rm -rf __pycache__ **/__pycache__ venv dist build RequestiPy.exe
+	$(PY) http_client/setup.py clean
+	$(PIP) uninstall -y -r requirements.txt
+	rm -rf __pycache__ **/__pycache__ $(VENV_DIR) dist build **/*.pyc **/*.so
+
+re: clean run
 
 pre-push: clean freeze
