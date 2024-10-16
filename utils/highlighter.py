@@ -13,6 +13,7 @@ def python_highlight(textbox):
     textbox.tag_remove("string", "1.0", "end")
     textbox.tag_remove("int", "1.0", "end")
     textbox.tag_remove("float", "1.0", "end")
+    textbox.tag_remove("bracket", "1.0", "end")
 
     # Define syntax highlighting colors
     textbox.tag_config("keyword", foreground=colors.blue)
@@ -20,6 +21,7 @@ def python_highlight(textbox):
     textbox.tag_config("string", foreground=colors.lerp(colors.green, colors.content2, 0.5))
     textbox.tag_config("int", foreground=colors.pink)
     textbox.tag_config("float", foreground=colors.purple)
+    textbox.tag_config("bracket", foreground=colors.lerp(colors.grey, colors.content2, 0.75))
 
     # Get the full text from the textbox
     content = textbox.get("1.0", "end")
@@ -63,6 +65,13 @@ def python_highlight(textbox):
             start_index = f"{i + 1}.{match.start()}"
             end_index = f"{i + 1}.{match.end()}"
             textbox.tag_add("float", start_index, end_index)
+
+        # Highlight brackets and content inside them
+        matches = re.finditer(r'\(|\)|\[|\]|\{|\}', line)
+        for match in matches:
+            start_index = f"{i + 1}.{match.start()}"
+            end_index = f"{i + 1}.{match.end()}"
+            textbox.tag_add("bracket", start_index, end_index)
 
 
 def header_highlight(textbox):
@@ -121,30 +130,30 @@ def header_highlight(textbox):
             textbox.tag_add("comment", comment_start, comment_end)
 
     # Highlight variables in the header
-    pattern = re.compile(r"\$\$(.*?)\$\$")
+    pattern = re.compile(r"§(.*?)§")
     for match in pattern.finditer(content):
         start_index = f"1.{match.start()}"
         end_index = f"1.{match.end()}"
         textbox.tag_add("variable", start_index, end_index)
 
 
-def body_highlight(textbox):
-    """Applies basic syntax highlighting to $$key$$ tags in the body."""
+def vars_highlight(textbox):
+    """Applies basic syntax highlighting to §key§ tags."""
     # Clear existing tags
-    textbox.tag_remove("key", "1.0", "end")
+    textbox.tag_remove("vars_key", "1.0", "end")
 
     # Configure the highlighting for key tags
-    textbox.tag_config("key", foreground=colors.white)
+    textbox.tag_config("vars_key", foreground=colors.white)
 
-    # Define the pattern for $$key$$ tags
-    pattern = re.compile(r"\$\$(.*?)\$\$")
+    # Define the pattern for §key§ tags
+    pattern = re.compile(r"§(.*?)§")
 
     # Get the full text from the textbox and strip whitespace
     content = textbox.get("1.0", "end").strip()
     if not content:
         return
 
-    # Use regex to find all $$key$$ tags in the content
+    # Use regex to find all §key§ tags in the content
     for match in pattern.finditer(content):
         if match:
             start_index = f"1.{match.start()}"
