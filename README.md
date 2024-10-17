@@ -5,8 +5,8 @@
 </div>
 
 ### A simple scriptable HTTP request tool.
-
-> Note: This project is quite buggy and only designed for my personal use.
+> [!CAUTION]
+> This project is quite buggy and only designed for my personal use.
 
 #### Requirements:
 
