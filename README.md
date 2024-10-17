@@ -1,7 +1,7 @@
 # RequestiPy
 
 <div align='center'>
-    <img src='.github/app.png' height='400px'>
+    <img src='.github/app.png' width='800px'>
 </div>
 
 ### A simple scriptable HTTP request tool.
